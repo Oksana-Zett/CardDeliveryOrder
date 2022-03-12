@@ -1,5 +1,6 @@
 package test;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import data.DataGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ public class CardDeliveryOrderTest {
 
     @BeforeEach
     void setup() {
+        Configuration.headless = true;
         open("http://localhost:9999");
     }
 
