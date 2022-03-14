@@ -1,4 +1,5 @@
 package test;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import data.DataGenerator;
@@ -142,7 +143,7 @@ public class CardDeliveryOrderTest {
         $$("[class=menu-item__control]").contains(text(validUser.getCity()));
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
-        $("[data-test-id='name'] input").sendKeys("123456");
+        $("[data-test-id='name'] input").sendKeys(DataGenerator.generateRandomDigit("ru"));
         $("[data-test-id='phone'] input").sendKeys(validUser.getPhone());
         $(".checkbox__box").click();
         $(byText("Запланировать")).click();
@@ -158,7 +159,7 @@ public class CardDeliveryOrderTest {
         $$("[class=menu-item__control]").contains(text(validUser.getCity()));
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
-        $("[data-test-id='name'] input").sendKeys("$%^!#");
+        $("[data-test-id='name'] input").sendKeys(DataGenerator.generateRandomSpecSymbols());
         $("[data-test-id='phone'] input").sendKeys(validUser.getPhone());
         $(".checkbox__box").click();
         $(byText("Запланировать")).click();
@@ -182,6 +183,23 @@ public class CardDeliveryOrderTest {
     }
 
     @Test
+    public void shouldNameHaveLetterIsYo() {
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+        $("[data-test-id='city'] input").sendKeys(validUser.getCity());
+        $$("[class=menu-item__control]").contains(text(validUser.getCity()));
+        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
+        $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
+        $("[data-test-id='name'] input").sendKeys(DataGenerator.generateNameWithYo());
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone());
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $("[class='notification__content']")
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + firstMeetingDate), Duration.ofSeconds(15));
+    }
+
+    @Test
     public void shouldPhoneLetterCyrillic() {
         var validUser = DataGenerator.Registration.generateUser("ru");
         var daysToAddForFirstMeeting = 4;
@@ -191,10 +209,12 @@ public class CardDeliveryOrderTest {
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
         $("[data-test-id='name'] input").sendKeys(validUser.getName());
-        $("[data-test-id='phone'] input").sendKeys("арарт");
-        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
+        $("[data-test-id='phone'] input").sendKeys(validUser.getName());
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
         Assertions.assertEquals("+", actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
     }
 
     @Test
@@ -223,10 +243,14 @@ public class CardDeliveryOrderTest {
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
         $("[data-test-id='name'] input").sendKeys(validUser.getName());
-        $("[data-test-id='phone'] input").sendKeys("79614002112");
-        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
-        Assertions.assertEquals("+7 961 400 21 12", actual);
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone().substring(1));
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
+        Assertions.assertEquals(validUser.getPhone().substring(0, 2) + " " + validUser.getPhone().substring(3, 6) + " " + validUser.getPhone().substring(7, 10) + " " + validUser.getPhone().substring(11, 13)
+                + " " + validUser.getPhone().substring(14, 16), actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $("[class='notification__content']")
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + firstMeetingDate), Duration.ofSeconds(15));
     }
 
     @Test
@@ -239,10 +263,13 @@ public class CardDeliveryOrderTest {
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
         $("[data-test-id='name'] input").sendKeys(validUser.getName());
-        $("[data-test-id='phone'] input").sendKeys("796140+02112");
-        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
-        Assertions.assertEquals("+7 961 400 21 12", actual);
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone().substring(0, 5) + "+" + validUser.getPhone().substring(5, 16));
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
+        Assertions.assertEquals(validUser.getPhone().substring(0, 2) + " " + validUser.getPhone().substring(3, 6) + " " + validUser.getPhone().substring(7, 10) + " " + validUser.getPhone().substring(11, 13)
+                + " " + validUser.getPhone().substring(14, 16), actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
     }
 
     @Test
@@ -255,10 +282,13 @@ public class CardDeliveryOrderTest {
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
         $("[data-test-id='name'] input").sendKeys(validUser.getName());
-        $("[data-test-id='phone'] input").sendKeys("79614002112+");
-        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
-        Assertions.assertEquals("+7 961 400 21 12", actual);
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone() + "+");
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
+        Assertions.assertEquals(validUser.getPhone().substring(0, 2) + " " + validUser.getPhone().substring(3, 6) + " " + validUser.getPhone().substring(7, 10) + " " + validUser.getPhone().substring(11, 13)
+                + " " + validUser.getPhone().substring(14, 16), actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
     }
 
     @Test
@@ -271,43 +301,48 @@ public class CardDeliveryOrderTest {
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
         $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
         $("[data-test-id='name'] input").sendKeys(validUser.getName());
-        $("[data-test-id='phone'] input").sendKeys("!@#%^");
-        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
+        $("[data-test-id='phone'] input").sendKeys(DataGenerator.generateRandomSpecSymbols());
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
         Assertions.assertEquals("+", actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
     }
 
-//    @Test
-//    public void shouldPhoneOneNumeral() {
-//        var validUser = DataGenerator.Registration.generateUser("ru");
-//        var daysToAddForFirstMeeting = 4;
-//        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
-//        $("[data-test-id='city'] input").sendKeys(validUser.getCity());
-//        $$("[class=menu-item__control]").contains(text(validUser.getCity()));
-//        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
-//        $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
-//        $("[data-test-id='name'] input").sendKeys(validUser.getName());
-//        $("[data-test-id='phone'] input").sendKeys("9");
-//        String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-//        //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
-//        Assertions.assertEquals("+9", actual);
-//    }
+    @Test
+    public void shouldPhoneOneNumeral() {
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+        $("[data-test-id='city'] input").sendKeys(validUser.getCity());
+        $$("[class=menu-item__control]").contains(text(validUser.getCity()));
+        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
+        $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
+        $("[data-test-id='name'] input").sendKeys(validUser.getName());
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone().substring(5, 6));
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
+    }
 
     @Test
     public void shouldPhoneTwelveNumeral() {
-            var validUser = DataGenerator.Registration.generateUser("ru");
-            var daysToAddForFirstMeeting = 4;
-            var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
-            $("[data-test-id='city'] input").sendKeys(validUser.getCity());
-            $$("[class=menu-item__control]").contains(text(validUser.getCity()));
-            $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
-            $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
-            $("[data-test-id='name'] input").sendKeys(validUser.getName());
-            $("[data-test-id='phone'] input").sendKeys("796140021125");
-            String actual=$("[data-test-id='phone'] input.input__control").getAttribute("value");
-            //$("[data-test-id='phone'] input.input__control").getAttribute("value").equals("+");
-            Assertions.assertEquals("+7 961 400 21 12", actual);
-        }
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+        $("[data-test-id='city'] input").sendKeys(validUser.getCity());
+        $$("[class=menu-item__control]").contains(text(validUser.getCity()));
+        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a");
+        $("[data-test-id='date'] input").sendKeys(firstMeetingDate);
+        $("[data-test-id='name'] input").sendKeys(validUser.getName());
+        $("[data-test-id='phone'] input").sendKeys(validUser.getPhone() + validUser.getPhone().substring(4, 5));
+        String actual = $("[data-test-id='phone'] input.input__control").getAttribute("value");
+        Assertions.assertEquals(validUser.getPhone().substring(0, 2) + " " + validUser.getPhone().substring(3, 6) + " " + validUser.getPhone().substring(7, 10) + " " + validUser.getPhone().substring(11, 13)
+                + " " + validUser.getPhone().substring(14, 16), actual);
+        $(".checkbox__box").click();
+        $(byText("Запланировать")).click();
+        $(withText("Поле заполнено некорректно")).shouldBe(visible);
+    }
 
     @Test
     public void shouldConsentFlagNotSet() {

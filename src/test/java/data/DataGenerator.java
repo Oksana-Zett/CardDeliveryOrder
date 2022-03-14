@@ -15,20 +15,6 @@ public class DataGenerator {
     private DataGenerator() {
     }
 
-//    public static class Registration {
-//        private Registration() {
-//        }
-//
-//        public static RegistrationByCardInfo generateByCard(String locale) {
-//            Faker faker = new Faker(new Locale(locale));
-//            return new RegistrationByCardInfo(
-//                    faker.name().fullName(),
-//                    faker.finance().creditCard(CreditCardType.MASTERCARD),
-//                    LocalDate.now().plusYears(1)
-//            );
-//        }
-//    }
-
     public static String generateDate(int shift) {
         return LocalDate.now().plusDays(shift).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
@@ -52,6 +38,26 @@ public class DataGenerator {
         //  добавить логику для объявления переменной city и задания её значения, генерацию можно выполнить
         // с помощью Faker, либо используя массив валидных городов и класс Random
         return city;
+    }
+
+    public static String generateRandomDigit (String locale){
+        Faker faker = new Faker(new Locale(locale));
+        return faker.number().digits((int)Math.floor(Math.random()*10+1));
+    }
+
+    public static String generateNameWithYo (){
+        String nameWithYo[] = {"Ёлкин", "Аксёнов", "Маслёнов", "Парфёнов", "Семёнов", "Локтёв", "Фёдор", "Семён", "Алёна"};
+        String currentName = nameWithYo[(int)Math.floor(Math.random() * nameWithYo.length)];
+        return currentName;
+    }
+
+    public static String generateRandomSpecSymbols (){
+        String symbols[] = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")"};
+        String randomSpecSymbols = null;
+        for (String item: symbols) {
+          randomSpecSymbols=symbols[(int)Math.floor(Math.random() *symbols.length)] + randomSpecSymbols;
+        }
+        return randomSpecSymbols;
     }
 
     public static String generateName(String locale) {
